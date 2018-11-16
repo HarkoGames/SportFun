@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aeffd1d79c708d947844a9e8b1f1e025, type: 3}
+  m_Name: Idle standard Assets
+  m_EditorClassIdentifier: 
+  Name: 
+  State: 1
+  motionAnimator: {fileID: 9100000, guid: f757112cdd3bf0d4e83bec432ad34625, type: 2}
+  HitboxDefinitions: []
+  ActionIdle: 1
