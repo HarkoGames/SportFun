@@ -13,6 +13,7 @@ namespace SportFun
         public float RunSpeed { get; set; }
         public float CrouchSpeed { get; set; }
         public float SlowDown { get; set; }
+        public float JumpPower { get; set; }
     }
 
     public class CharacterMotor : MonoBehaviour
@@ -29,12 +30,21 @@ namespace SportFun
         public float CrouchSpeed = 1f;
         [HideInInspector]
         public float SlowDown = 1f;
-        
+        [HideInInspector]
+        public float JumpPower = 5f;
+
+        private bool mIsGrounded = false;
+        //public bool IsGrounded { get { return mIsGrounded; } }
         public bool IsGrounded { get { return CheckGrounded(); } }
         private float distToGround;
         public float AirTimeError = .5f;
 
         private Rigidbody _rigidbody;
+        public void SetCollisionDetectionMode(CollisionDetectionMode mode)
+        {
+            _rigidbody.collisionDetectionMode = mode;
+        }
+
         public Vector3 Velocity
         {
             get
@@ -84,6 +94,7 @@ namespace SportFun
             RunSpeed = s.RunSpeed;
             CrouchSpeed = s.CrouchSpeed;
             SlowDown = s.SlowDown;
+            JumpPower = s.JumpPower;
         }
 
         private void OnEnable()
@@ -126,12 +137,19 @@ namespace SportFun
         public float maxVelocityChange = 10f;
         private float mInputMagnitude;
 
-        public void Impulse(Vector3 impulse)
+        private void FixedUpdate_disabled()
         {
-            _rigidbody.AddForce(impulse);
+            mIsGrounded = CheckGrounded();
         }
 
-        public void Move(Vector3 move, Vector3 rotation)
+        public void Jump()
+        {
+            this.moveInput = Vector3.up * JumpPower;
+            _rigidbody.velocity += this.moveInput;
+//            GroundedVelocity(true);
+        }
+
+        public void Move(Vector3 move, Vector3 rotation, bool additive = false)
         {
             // 'this' to make clear it's assigning a member variable ?
             this.moveInput = move;
@@ -155,7 +173,7 @@ namespace SportFun
             {
             */
                 GroundedRotation();
-                GroundedVelocity();
+                GroundedVelocity(additive);
             UpdateAnimator(adjustedMoveInput, facingDiff);// transform.InverseTransformDirection(mVelocity.normalized));
             /*
             }
@@ -198,7 +216,7 @@ namespace SportFun
 
         private float tempSpeed;
 
-        void GroundedVelocity()
+        void GroundedVelocity(bool additive = false)
         {
             Vector3 velocityChange = Vector3.zero;
 
@@ -228,13 +246,19 @@ namespace SportFun
                     tempSpeed = WalkSpeed;
                 }
                 moveInput *= (tempSpeed * mInputMagnitude);
-                //fake speed out at 5 for the moment
 
                 // Apply a force that attempts to reach our target velocity
-                velocityChange = (moveInput - velocity);
-                velocityChange.x = Mathf.Clamp(velocityChange.x, -maxVelocityChange, maxVelocityChange);
-                velocityChange.z = Mathf.Clamp(velocityChange.z, -maxVelocityChange, maxVelocityChange);
-                velocityChange.y = 0;
+                if (!additive)
+                {
+                    velocityChange = (moveInput - velocity);
+                    velocityChange.x = Mathf.Clamp(velocityChange.x, -maxVelocityChange, maxVelocityChange);
+                    velocityChange.z = Mathf.Clamp(velocityChange.z, -maxVelocityChange, maxVelocityChange);
+                    //velocityChange.y = Mathf.Clamp(velocityChange.z, -maxVelocityChange, maxVelocityChange);
+                }
+                else // add additional force to our current velocity
+                {
+                    velocityChange = moveInput;
+                }
 
                 //rigidbody.AddForce(velocityChange, ForceMode.VelocityChange);
             }
@@ -258,45 +282,6 @@ namespace SportFun
 //            mVelocity = GetComponent<Rigidbody>().velocity; // not sure which it would be
         }
 
-        void AirVelocity()
-        {
-            Vector3 velocityChange = Vector3.zero;
-
-            Vector3 drawPosition2 = transform.position + new Vector3(0, 1, 0);
-            Debug.DrawLine(drawPosition2, drawPosition2 + moveInput, Color.red);
-
-            Vector3 velocity = Velocity;
-            // if (moveInput.magnitude > 1f) moveInput.Normalize(); // new
-            if (moveInput.magnitude > 0)
-            {
-                // convert the world relative moveInput vector into a local-relative
-                // turn amount and forward amount required to head in the desired
-                // direction. 
-                moveInput = ((transform.position + moveInput) - transform.position).normalized;
-                if (GetActionKey(ActionKeys.Run))
-                {
-                }
-                moveInput *= (tempSpeed * mInputMagnitude);
-
-                // Apply a force that attempts to reach our target velocity
-                velocityChange = (moveInput - velocity);
-                velocityChange.x = Mathf.Clamp(velocityChange.x, -maxVelocityChange, maxVelocityChange);
-                velocityChange.y = Mathf.Clamp(velocityChange.y, -maxVelocityChange, maxVelocityChange);
-                velocityChange.z = Mathf.Clamp(velocityChange.z, -maxVelocityChange, maxVelocityChange);
-            }
-
-            else if (velocity != Vector3.zero) // if no input, but we're still moving
-            {
-                // just let gravity pull them down?
-            }
-            message += string.Format("moveInput: {0} VelocityChange {1} Velocity {2}", moveInput, velocityChange, Velocity);
-            if (!UseRootMotion)
-            {
-                message += "\n Changing Velocity";
-                GetComponent<Rigidbody>().velocity += velocityChange * mInputMagnitude;
-            }
-            mVelocity = velocityChange;
-        }
 
         /*
         public void OnAnimatorMove()

@@ -9,7 +9,8 @@ namespace SportFun.Motions
         MeleeFist = 10,
         Flying = 100,
         Jump = 3,
-        Climb = 4
+        Climb = 4,
+        Fall = 5
     }
 
     public enum MotionSubState
@@ -17,6 +18,7 @@ namespace SportFun.Motions
         _UNKNOWN = 0,
         Attack = 1,
         Combo = 2,
-        JumpingUp,JumpingMidair,Falling
+        JumpingUp = 3,JumpingMidair = 4,JumpingDown = 5, Falling = 6,
+        Recovery=10
     }
 }

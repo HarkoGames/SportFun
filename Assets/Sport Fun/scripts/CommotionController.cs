@@ -43,13 +43,20 @@ namespace SportFun
         public BaseMotion[] Motions;
         private Dictionary<MotionState, BaseMotion> availableStates;
         private BaseMotion currentMotion;
-        private MotionState currentState;
+        [HideInInspector]
+        public MotionState currentState;
+        /// <summary>
+        /// optional state to return to once another state has finished (like jump, fall, etc)
+        /// not really implemented yet
+        /// </summary>
+        private MotionState returnState;
 
         public float turnSpeed = 180 / 60; //10f;
         public float walkSpeed = 2f;
         public float runSpeed = 5f;
         public float crouchSpeed = 1f;
         public float slowDown = 1f;
+        public float jumpPower = 5f;
 
         private void Awake()
         {
@@ -66,7 +73,7 @@ namespace SportFun
                 RunSpeed = runSpeed,
                 CrouchSpeed = crouchSpeed,
                 SlowDown = slowDown,
-
+                JumpPower = jumpPower
             });
             RegisterMotions();
             DefaultToState();
@@ -182,6 +189,13 @@ namespace SportFun
             {
                 if (currentState != MotionState.Jump) SetState(MotionState.Jump);
             }
+
+            if (!myMotor.IsGrounded && 
+                (currentState != MotionState.Fall && currentState != MotionState.Jump))
+            {
+                SetState(MotionState.Fall);
+            }
+
             if (currentMotion != null)
             {
                 currentMotion.Update();

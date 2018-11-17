@@ -8,12 +8,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: afaed7130525840478eba9b85276255c, type: 3}
-  m_Name: Jump standard assets
+  m_Script: {fileID: 11500000, guid: 15287b33672115e4882b68d0bb8ed6b4, type: 3}
+  m_Name: Fall standard assets
   m_EditorClassIdentifier: 
-  Name: Jump
-  State: 3
-  motionAnimator: {fileID: 9100000, guid: 32b41ba93acb756499c82be8de63ccce, type: 2}
+  Name: 
+  State: 5
+  motionAnimator: {fileID: 9100000, guid: 71cd87653196d4d40bb85bae92cac889, type: 2}
   HitboxDefinitions: []
   ActionIdle: 1
-  recoveryInterval: 2
+  recoveryInterval: 3
