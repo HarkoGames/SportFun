@@ -66,6 +66,7 @@ namespace SportFun.Motions
                     fallTime += Time.deltaTime;
                     break;
                 case MotionSubState.Recovery:
+                    recoveryInterval = fallTime * .5f;
                     recoveryTime += Time.deltaTime; // vary recovery interval by falltime
                     if (recoveryTime >= recoveryInterval)
                     {

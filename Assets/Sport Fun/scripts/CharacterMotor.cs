@@ -28,16 +28,23 @@ namespace SportFun
         public float RunSpeed = 5f;
         [HideInInspector]
         public float CrouchSpeed = 1f;
-        [HideInInspector]
+        //[HideInInspector]
         public float SlowDown = 1f;
         [HideInInspector]
         public float JumpPower = 5f;
 
         private bool mIsGrounded = false;
-        //public bool IsGrounded { get { return mIsGrounded; } }
-        public bool IsGrounded { get { return CheckGrounded(); } }
+        private bool mIsGroundedNoError = false;
+        public bool IsGrounded { get { return mIsGrounded; } }
+//        public bool IsGrounded { get { return CheckGrounded(); } }
+        public bool IsGroundedNoError { get { return mIsGroundedNoError; } }
+ //       public bool IsGroundedNoError { get { return CheckGrounded(true); } }
+        private float slope;
+        public Transform groundCheck;
         private float distToGround;
         public float AirTimeError = .5f;
+        private Collider footCollider;
+        private Collider torsoCollider; 
 
         private Rigidbody _rigidbody;
         public void SetCollisionDetectionMode(CollisionDetectionMode mode)
@@ -83,8 +90,8 @@ namespace SportFun
         {
             mActionKeys = new Dictionary<int, bool>();
             _rigidbody = GetComponent<Rigidbody>();
-            var c = GetComponent<CapsuleCollider>();
-            distToGround = c.bounds.extents.y;
+            torsoCollider = GetComponent<CapsuleCollider>();
+            footCollider = GetComponent<SphereCollider>();
         }
 
         public void Init(CharacterMotorSettings s)
@@ -110,14 +117,31 @@ namespace SportFun
         void Start()
         {
             myAnim = GetComponent<Animator>(); // can be null
-           // myAnim.SetBool("InCombat", true);
         }
 
-        bool CheckGrounded()
+        void CheckGrounded()
         {
-            var checkPos = transform.position + (Vector3.up * .25f);
-            Debug.DrawLine(checkPos, checkPos + (Vector3.down  * (distToGround + AirTimeError)), Color.red, 1f);
-            return Physics.Raycast(checkPos, -Vector3.up, distToGround + AirTimeError);
+            distToGround = footCollider.bounds.extents.y;
+//            AirTimeError = .05f;
+            var error = AirTimeError;
+            var checkPos = groundCheck.position;
+            Debug.DrawLine(checkPos, checkPos + (Vector3.down * (distToGround + error)), Color.red, 1f);
+            Debug.DrawLine(checkPos, checkPos + (Vector3.down * (distToGround)), Color.green, 1f);
+            RaycastHit hit;
+            Ray r = new Ray(checkPos, Vector3.down);
+            mIsGrounded = false;
+            if( Physics.Raycast(r, out  hit, distToGround + error))
+            {
+                slope = Vector3.Angle(hit.normal, Vector3.up);
+                Debug.DrawRay(transform.position, hit.normal, Color.gray);
+
+                mIsGrounded = true;
+            }
+            mIsGroundedNoError = false;
+            if (Physics.SphereCast(checkPos,distToGround,Vector3.down, out hit))
+            {
+                mIsGroundedNoError = true;
+            }
         }
 
         string message;
@@ -130,6 +154,11 @@ namespace SportFun
             }
         }
 
+        private void OnDrawGizmos()
+        {
+            Gizmos.DrawWireSphere(groundCheck.position, distToGround);
+        }
+
         public Vector3 moveInput;
         public Vector3 rotationInput;
         float turnAmount;
@@ -137,9 +166,9 @@ namespace SportFun
         public float maxVelocityChange = 10f;
         private float mInputMagnitude;
 
-        private void FixedUpdate_disabled()
+        private void FixedUpdate()
         {
-            mIsGrounded = CheckGrounded();
+            CheckGrounded();
         }
 
         public void Jump()
@@ -218,10 +247,8 @@ namespace SportFun
 
         void GroundedVelocity(bool additive = false)
         {
-            Vector3 velocityChange = Vector3.zero;
-
             Vector3 drawPosition2 = transform.position + new Vector3(0, 1, 0);
-            Debug.DrawLine(drawPosition2, drawPosition2 + moveInput, Color.red);
+            Vector3 velocityChange = Vector3.zero;
 
             Vector3 velocity = Velocity;
            // if (moveInput.magnitude > 1f) moveInput.Normalize(); // new
@@ -237,12 +264,18 @@ namespace SportFun
                 */
                 /* this need to move to the stat based character specific file*/
                 moveInput = ((transform.position + moveInput) - transform.position).normalized;
+
+                // adjust the input by the slope, so that going up/ downhill is smoother
+                var rot = Quaternion.Euler(slope,0,0);
+                moveInput = rot * moveInput;
+                Debug.DrawLine(drawPosition2, drawPosition2 + moveInput, Color.black);
+
                 if (GetActionKey(ActionKeys.Run))
                 {
                     tempSpeed = RunSpeed;
                 }
                 else
-                {
+                { 
                     tempSpeed = WalkSpeed;
                 }
                 moveInput *= (tempSpeed * mInputMagnitude);
@@ -253,14 +286,11 @@ namespace SportFun
                     velocityChange = (moveInput - velocity);
                     velocityChange.x = Mathf.Clamp(velocityChange.x, -maxVelocityChange, maxVelocityChange);
                     velocityChange.z = Mathf.Clamp(velocityChange.z, -maxVelocityChange, maxVelocityChange);
-                    //velocityChange.y = Mathf.Clamp(velocityChange.z, -maxVelocityChange, maxVelocityChange);
                 }
                 else // add additional force to our current velocity
                 {
                     velocityChange = moveInput;
                 }
-
-                //rigidbody.AddForce(velocityChange, ForceMode.VelocityChange);
             }
 
             else if (velocity != Vector3.zero) // if no input, but we're still moving
@@ -270,9 +300,16 @@ namespace SportFun
                 //            velocityChange = stopDir * tempSlowDown;
                 velocityChange = Vector3.down * SlowDown;
             }
+            
+            if (IsGrounded)
+            {
+                //velocityChange += Vector3.down * .05f;//SlowDown;
+            }
+            
             //            GetComponent<Rigidbody>().AddForce(velocityChange, ForceMode.Force);
             message += string.Format("moveInput: {0} VelocityChange {1} Velocity {2}", moveInput, velocityChange, GetComponent<Rigidbody>().velocity);
             //message += "\ntargetVelocity: " + moveInput.ToString() + " velocityChange: " + velocityChange.ToString();
+            Debug.DrawLine(drawPosition2, drawPosition2 + velocityChange, Color.cyan);
             if (!UseRootMotion)
             {
                 message += "\n Changing Velocity";

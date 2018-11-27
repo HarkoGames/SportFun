@@ -16,4 +16,4 @@ MonoBehaviour:
   motionAnimator: {fileID: 9100000, guid: 32b41ba93acb756499c82be8de63ccce, type: 2}
   HitboxDefinitions: []
   ActionIdle: 1
-  recoveryInterval: 2
+  recoveryInterval: 1

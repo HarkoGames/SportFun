@@ -69,11 +69,12 @@ namespace SportFun.Motions
 
         public override void Update()
         {
-            var grounded = myController.myMotor.IsGrounded;
-            if (!leftGround && !grounded)
+            var grounded = myController.myMotor.IsGroundedNoError;
+            if (!leftGround && !grounded) // check exactly if the character is grounded to see if the jump has started
             {
-                leftGround = true;
+                    leftGround = true;
             }
+
             var upVel = myController.myMotor.Velocity.y;
             jumpTime += Time.deltaTime;
             switch (currentSubState)
@@ -90,11 +91,7 @@ namespace SportFun.Motions
                     }
                     break;
                 case MotionSubState.JumpingMidair: // midair
-                    if (upVel > 0) // fix this for gravity direction changes
-                    {
-                        jumpTime += Time.deltaTime;
-                    }
-                    else
+                    if (upVel <= 0) // fix this for gravity direction changes
                     {
                         fallTime += Time.deltaTime;
                     }
@@ -116,6 +113,7 @@ namespace SportFun.Motions
             if ((currentSubState != MotionSubState.Recovery) && leftGround && grounded)
             {
                 recoveryTime = 0f;
+                recoveryInterval = fallTime * .25f;
                 SetSubState(MotionSubState.Recovery);
             }
             base.Update();
