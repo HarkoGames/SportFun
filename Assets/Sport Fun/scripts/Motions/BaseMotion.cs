@@ -104,25 +104,12 @@ namespace SportFun.Motions
 
         public virtual void Start()
         {
-            /*
-            if (motionAnimator != null)
-            {
-                originalAnimator = myController.myAnim.runtimeAnimatorController;
-                myController.myAnim.runtimeAnimatorController = motionAnimator;
-                usingCustomAnimator = true;
-            }
-            */
             enabled = true;
         }
 
         public virtual void Stop()
         {
             enabled = false;
-            if (usingCustomAnimator)
-            {
-                myController.myAnim.runtimeAnimatorController = originalAnimator;
-                usingCustomAnimator = false;
-            }
         }
 
         public virtual void Move(Vector3 move, Vector3 rotation)

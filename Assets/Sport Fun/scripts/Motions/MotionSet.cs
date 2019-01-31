@@ -31,16 +31,9 @@ namespace SportFun.Motions
             path = path.Replace(this.name + ".asset", "");
             var animatorName = GetAnimatorKeyname();
 
-            path = "Assets/Test";
-
-            var controllerPathGuids = AssetDatabase.FindAssets(animatorName, new string[] { path });
-
-            foreach (var guid in controllerPathGuids)
-            {
-                Debug.Log(AssetDatabase.GUIDToAssetPath(guid));
-            }
-            //var animPathFmt = "{0}/Controllers/{1}";
-            var animPathFmt = "{0}/{1}";
+            
+            var animPathFmt = "{0}/Controllers/{1}";
+            //var animPathFmt = "{0}/{1}";
             // Creates the controller
             AnimatorController controller = AssetDatabase.LoadAssetAtPath<AnimatorController>(string.Format(animPathFmt, path, animatorName));
             if (controller == null)
