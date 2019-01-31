@@ -57,7 +57,7 @@ namespace SportFun.Motions
 
         public override void Update()
         {
-            var grounded = myController.myMotor.IsGrounded;
+            var grounded = myController.myMotor.IsGroundedNoError || myController.myMotor.IsGrounded;
             var upVel = myController.myMotor.Velocity.y;
             fallTime += Time.deltaTime;
             switch (currentSubState)

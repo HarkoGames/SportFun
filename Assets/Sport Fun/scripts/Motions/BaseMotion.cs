@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using SportFun;
+using UnityEditor.Animations;
 
 namespace SportFun.Motions
 {
@@ -13,7 +14,8 @@ namespace SportFun.Motions
         #region metadata stuff
         public string Name;
         public MotionState State;
-        public RuntimeAnimatorController motionAnimator;
+        
+        public AnimatorController motionAnimator;
         private bool usingCustomAnimator = false;
         private RuntimeAnimatorController originalAnimator;
         public MotionStateHitboxDefinition[] HitboxDefinitions;
@@ -102,12 +104,14 @@ namespace SportFun.Motions
 
         public virtual void Start()
         {
+            /*
             if (motionAnimator != null)
             {
                 originalAnimator = myController.myAnim.runtimeAnimatorController;
                 myController.myAnim.runtimeAnimatorController = motionAnimator;
                 usingCustomAnimator = true;
             }
+            */
             enabled = true;
         }
 

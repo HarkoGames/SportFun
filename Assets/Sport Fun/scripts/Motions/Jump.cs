@@ -69,7 +69,7 @@ namespace SportFun.Motions
 
         public override void Update()
         {
-            var grounded = myController.myMotor.IsGroundedNoError;
+            var grounded = myController.myMotor.IsGroundedNoError || myController.myMotor.IsGrounded;
             if (!leftGround && !grounded) // check exactly if the character is grounded to see if the jump has started
             {
                     leftGround = true;

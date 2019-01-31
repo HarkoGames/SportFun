@@ -1,10 +1,10 @@
 fileFormatVersion: 2
 guid: afaed7130525840478eba9b85276255c
-timeCreated: 1495215648
-licenseType: Free
 MonoImporter:
+  externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - motionAnimator: {fileID: 9100000, guid: 32b41ba93acb756499c82be8de63ccce, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

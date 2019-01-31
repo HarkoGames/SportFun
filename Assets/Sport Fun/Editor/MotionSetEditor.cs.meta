@@ -1,10 +1,9 @@
 fileFormatVersion: 2
-guid: aeffd1d79c708d947844a9e8b1f1e025
+guid: 298693a783c5f2c41bc86e31ff48f45d
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences:
-  - motionAnimator: {fileID: 9100000, guid: f757112cdd3bf0d4e83bec432ad34625, type: 2}
+  defaultReferences: []
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

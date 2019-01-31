@@ -40,6 +40,7 @@ namespace SportFun
         public bool IsGroundedNoError { get { return mIsGroundedNoError; } }
  //       public bool IsGroundedNoError { get { return CheckGrounded(true); } }
         private float slope;
+        private Vector3 slopeNormal;
         public Transform groundCheck;
         private float distToGround;
         public float AirTimeError = .5f;
@@ -130,8 +131,11 @@ namespace SportFun
             RaycastHit hit;
             Ray r = new Ray(checkPos, Vector3.down);
             mIsGrounded = false;
+            slope = 0f;
+            slopeNormal = Vector3.zero;
             if( Physics.Raycast(r, out  hit, distToGround + error))
             {
+                slopeNormal = hit.normal;
                 slope = Vector3.Angle(hit.normal, Vector3.up);
                 Debug.DrawRay(transform.position, hit.normal, Color.gray);
 
@@ -181,9 +185,9 @@ namespace SportFun
         public void Move(Vector3 move, Vector3 rotation, bool additive = false)
         {
             // 'this' to make clear it's assigning a member variable ?
-            this.moveInput = move;
+            moveInput = move;
             if (moveInput.sqrMagnitude > 1f) moveInput.Normalize();
-            this.rotationInput = rotation;
+            rotationInput = rotation;
             mInputMagnitude = moveInput.magnitude;
             var adjustedMoveInput = transform.InverseTransformDirection(moveInput);
             Debug.DrawRay(transform.position + (Vector3.up * 1.05f), transform.rotation * Vector3.forward, Color.green);
@@ -266,7 +270,8 @@ namespace SportFun
                 moveInput = ((transform.position + moveInput) - transform.position).normalized;
 
                 // adjust the input by the slope, so that going up/ downhill is smoother
-                var rot = Quaternion.Euler(slope,0,0);
+                var rot = Quaternion.FromToRotation(Vector3.up, slopeNormal);
+
                 moveInput = rot * moveInput;
                 Debug.DrawLine(drawPosition2, drawPosition2 + moveInput, Color.black);
 

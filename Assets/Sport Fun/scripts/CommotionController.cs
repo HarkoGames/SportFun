@@ -40,7 +40,8 @@ namespace SportFun
 
         public Animator myAnim;
         public CharacterMotor myMotor { get; set; }
-        public BaseMotion[] Motions;
+        public MotionSet MotionSet;
+//        public BaseMotion[] Motions;
         private Dictionary<MotionState, BaseMotion> availableStates;
         private BaseMotion currentMotion;
         [HideInInspector]
@@ -128,8 +129,8 @@ namespace SportFun
             meleeUnarmed.Init(this);
             availableStates.Add(MotionState.MeleeFist, meleeUnarmed);
             */
-            
-            foreach (BaseMotion b in Motions)
+            myAnim.runtimeAnimatorController = MotionSet.myAnimController;
+            foreach (BaseMotion b in MotionSet.motions)
             {
                 if (!availableStates.ContainsKey(b.State))
                 {
