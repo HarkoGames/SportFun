@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1530ae55e1f4ab34e9c64f2f71de7b82, type: 3}
   m_Name: test
   m_EditorClassIdentifier: 
-  Name: Standard Assets
+  Name: Standard_Assets
   Version: 0
   motions:
   - {fileID: 11400000, guid: 4e3a918f08b8a35488df7d88c42387bc, type: 2}
   - {fileID: 11400000, guid: 487f00a9b53c3f24b95109226cad601b, type: 2}
   - {fileID: 11400000, guid: d910bb72c379c264e86115d59893e934, type: 2}
   - {fileID: 11400000, guid: bf1d251908c25bb4da02c70f624642c3, type: 2}
-  myAnimController: {fileID: 9100000, guid: 1366c116003ece64badd030b8f3dc8f7, type: 2}
+  myAnimController: {fileID: 9100000, guid: 31dc1b85c899c374fb6ebc05d1078a78, type: 2}

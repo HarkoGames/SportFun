@@ -12,9 +12,13 @@ namespace SportFun.Motions
         {
             DrawDefaultInspector();
             MotionSet myScript = (MotionSet)target;
-            if (GUILayout.Button("Generate Animator"))
+            if (GUILayout.Button("Generate Animator for Motions"))
             {
-                myScript.GenerateAnimator();
+                myScript.GenerateAnimatorFromMotionStates();
+            }
+            if (GUILayout.Button("Generate Generic Animator for new motion"))
+            {
+                myScript.GenerateGenericController();
             }
         }
     }

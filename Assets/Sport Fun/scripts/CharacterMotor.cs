@@ -126,26 +126,29 @@ namespace SportFun
 //            AirTimeError = .05f;
             var error = AirTimeError;
             var checkPos = groundCheck.position;
-            Debug.DrawLine(checkPos, checkPos + (Vector3.down * (distToGround + error)), Color.red, 1f);
-            Debug.DrawLine(checkPos, checkPos + (Vector3.down * (distToGround)), Color.green, 1f);
+            //Debug.DrawLine(checkPos, checkPos + (Vector3.down * (distToGround + error)), Color.red, 1f);
+            //Debug.DrawLine(checkPos, checkPos + (Vector3.down * (distToGround)), Color.green, 1f);
             RaycastHit hit;
             Ray r = new Ray(checkPos, Vector3.down);
             mIsGrounded = false;
+            var groundedWithError = false;
             slope = 0f;
             slopeNormal = Vector3.zero;
             if( Physics.Raycast(r, out  hit, distToGround + error))
             {
                 slopeNormal = hit.normal;
                 slope = Vector3.Angle(hit.normal, Vector3.up);
-                Debug.DrawRay(transform.position, hit.normal, Color.gray);
+                //Debug.DrawRay(transform.position, hit.normal, Color.gray);
 
-                mIsGrounded = true;
+                groundedWithError = true;
             }
             mIsGroundedNoError = false;
-            if (Physics.SphereCast(checkPos,distToGround,Vector3.down, out hit))
+            if (Physics.SphereCast(checkPos,distToGround,Vector3.down, out hit, distToGround))
             {
                 mIsGroundedNoError = true;
+                //Debug.DrawRay(transform.position, hit.normal, Color.cyan);
             }
+            mIsGrounded = groundedWithError || mIsGroundedNoError;
         }
 
         string message;

@@ -118,17 +118,6 @@ namespace SportFun
 
         private void RegisterMotions()
         {
-            /*
-            var idle = new Idle();
-            idle.Init(this);
-            availableStates.Add(MotionState.Idle, idle);
-            var loco = new Locomotion();
-            loco.Init(this);
-            availableStates.Add(MotionState.Locomotion, loco);
-            var meleeUnarmed = new MeleeUnarmed();
-            meleeUnarmed.Init(this);
-            availableStates.Add(MotionState.MeleeFist, meleeUnarmed);
-            */
             myAnim.runtimeAnimatorController = MotionSet.myAnimController;
             foreach (BaseMotion b in MotionSet.motions)
             {
